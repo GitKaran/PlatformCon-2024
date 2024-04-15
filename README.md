@@ -8,6 +8,7 @@ NAMESPACE="arc-systems"
 helm install arc \
     --namespace "${NAMESPACE}" \
     --create-namespace \
+    -f controller.yml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
 ```
 
@@ -18,13 +19,10 @@ helm install arc \
 ```sh
 INSTALLATION_NAME="arc-runner-set"
 NAMESPACE="arc-runners"
-GITHUB_CONFIG_URL="https://github.com/GitKaran/PlatformCon-2024"
-GITHUB_PAT="<YOUR-GITHUB-PAT>"
 helm install "${INSTALLATION_NAME}" \
     --namespace "${NAMESPACE}" \
     --create-namespace \
-    --set githubConfigUrl="${GITHUB_CONFIG_URL}" \
-    --set githubConfigSecret.github_token="${GITHUB_PAT}" \
+    -f listener.yml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 ```
 

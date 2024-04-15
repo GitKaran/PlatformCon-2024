@@ -1,0 +1,44 @@
+
+## URL of repository, organization, or enterprise.
+githubConfigUrl: "https://github.com/GitKaran/PlatformCon-2024"
+githubConfigSecret: <YOUR-SECRET-NAME>
+
+maxRunners: 5
+minRunners: 0
+
+containerMode:
+ type: "kubernetes"  ## type can be set to dind or kubernetes
+ kubernetesModeServiceAccount: "actions-runner-controller"
+
+template:
+  metadata:
+    labels:
+      app: arc-scale-set
+  spec:
+   serviceAccountName: "actions-runner-controller"
+   containers:
+   - name: runner
+     image: ghcr.io/actions/actions-runner:latest
+     command: ["/home/runner/run.sh"]
+     env:
+       - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+         value: /home/runner/k8s/index.js
+       - name: ACTIONS_RUNNER_POD_NAME
+         valueFrom:
+           fieldRef:
+             fieldPath: metadata.name
+       - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+         value: "false"
+     resources:
+       limits:
+         cpu: "1"
+         memory: "1Gi"
+       requests:
+         cpu: "150m"
+         memory: "200m"
+     volumeMounts:
+       - name: work
+         mountPath: /home/runner/_work
+   volumes:
+     - name: work
+       emptyDir: {}
